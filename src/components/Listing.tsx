@@ -1,40 +1,39 @@
 import { IListing } from "../models";
-import classnames from 'classnames';
-
 interface ListingProps {
   items: IListing
 }
 
 export default function Listing({ items }: ListingProps) {
 
-  const title = items.title.length > 50 ? `${items.title.slice(0, 50)}...` : items.title;
-  const currency = {
-    USD: '$',
-    EUR: '€',
-  };
-
-  let classQuantity = 'level-high';
-
-  if (items.quantity <= 10) {
-    classQuantity = 'level-low';
-  } else if (items.quantity <= 20) {
-    classQuantity = 'level-medium';
-  }
-
-  const className = classnames('item-quantity', classQuantity);
-
   return (
-    <>
-      <div className="item-image">
-        <a href={items.url}>
-          <img src={items.MainImage.url_570xN} alt={items}/>
-        </a>
-      </div>
-      <div className="item-details">
-        <p className="item-title">{title}</p>
-        <p className="item-price">{currency[items.currency_code] ? currency[items.currency_code] : items.currency_code} {items.price}</p>
-        <p className={className}>{items.quantity} left</p>
-      </div>
-    </>
+    <div className="item-list">
+      {items.map(
+        (item) =>
+          item.state === 'active' && (
+            <div key={item.listing_id} className="item">
+              <div className="item-image">
+                <a href={item.url}>
+                  <img src={item.MainImage.url_570xN} alt={"img " + `${item.title.slice(0, 30)}`} />
+                </a>
+              </div>
+              <div className="item-details">
+                <p className="item-title">{item.title.length > 50 ? `${item.title.slice(0, 50)}...` : item.title}</p>
+                <p className="item-price">
+                  {(item.currency_code === 'USD' && '$') || (item.currency_code === 'EUR' && '€ ')}{item.price}
+                  {item.currency_code !== 'USD' && item.currency_code !== 'EUR' && ' ' + item.currency_code}
+                </p>
+                <p className={
+                  'item-quantity level-' + 
+                  ((item.quantity! <= 10 && 'low') ||
+                  (item.quantity! <= 20 && 'medium') ||
+                  (item.quantity! > 20 && 'high'))
+                  }>
+                  {item.quantity} left
+                </p>
+              </div>
+            </div>
+          ),
+      )}
+    </div>
   );
 }
