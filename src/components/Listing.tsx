@@ -1,9 +1,10 @@
-import { IListing } from "../models";
+import { IItems, IListing} from "../models";
 interface ListingProps {
-  items: IListing
+  item: IListing
+  items: IItems
 }
 
-export default function Listing({ items }: ListingProps) {
+export default function Listing({ item, items }: ListingProps) {
 
   return (
     <div className="item-list">
